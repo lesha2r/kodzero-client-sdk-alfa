@@ -1,0 +1,15 @@
+// Mandatory
+.env
+node_modules
+
+// Dev files and folders
+dev.*s
+__dev__
+dev
+
+// Build output
+dist
+public
+
+// Internals
+todo*.md
