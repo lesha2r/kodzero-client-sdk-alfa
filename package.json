@@ -1,12 +1,12 @@
 {
   "name": "kodzero-front-sdk-alfa",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "dist/index.js",
   "scripts": {
     "tsc": "tsc -b src/",
     "tsc-watch": "tsc --b --watch src/",
     "tscw": "tsc --b --watch src/",
-    "dev": "nodemon dist/index.js",
+    "dev": "nodemon dist/dev.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "prepare": "npm version patch && npm run tsc"
   },

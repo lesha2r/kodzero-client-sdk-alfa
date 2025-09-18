@@ -1,13 +1,13 @@
 import FluidFetch from "fluid-fetch";
-import { KodzeroAuthBase } from "./base.js";
+import KodzeroAuthBase from "./base.js";
 import KodzeroAuthEmail from "./email.js";
-import { TokensManagerClass } from "./tokens.js";
+import TokensManagerClass from "./tokens.js";
 
 export interface AuthOptions {
     host: string
 }
 
-export class KodzeroAuth extends KodzeroAuthBase {
+class KodzeroAuth extends KodzeroAuthBase {
     email: KodzeroAuthEmail
     setTokens: (access: string, refresh?: string) => void
     clearTokens: () => void;
@@ -41,3 +41,5 @@ export class KodzeroAuth extends KodzeroAuthBase {
         }
     }
 }
+
+export default KodzeroAuth

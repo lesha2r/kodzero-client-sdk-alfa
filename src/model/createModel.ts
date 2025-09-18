@@ -2,7 +2,7 @@ import FluidFetch from 'fluid-fetch'
 import BaseModel, { ModelOptions } from './BaseModel.js'
 import {KzResponseFindMany } from '../types/responses.js'
 import validateApiResponse from '../utils/validateApiResponse.js'
-import buildURL from '../utils/buildURL_rename.js'
+import buildURL from '../utils/buildURL.js'
 import constants from './constants.js'
 
 export interface FindManyOptions {

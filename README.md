@@ -7,7 +7,6 @@ A lightweight OOP library for frontend applications to easily interact with Kodz
 ```bash
 npm install kodzero-front-sdk-alfa
 ```
-```
 
 ## Authentication
 
@@ -54,8 +53,6 @@ Creating and using models is the core functionality of the SDK. Models provide a
 ### Creating a Model
 
 ```javascript
-import Schema from 'validno';
-
 // Define your data model interface
 interface User {
   _id?: string;
@@ -64,13 +61,13 @@ interface User {
   createdAt?: Date;
 }
 
-// Optional: Create a schema for validation
-const userSchema = new Schema({
+// Optional: Create a schema object for validation
+const userSchema = {
   _id: { type: String },
   name: { type: String },
   email: { type: String },
   createdAt: { type: Date }
-});
+};
 
 // Create a model for the 'users' collection
 const User = kodzero.createModel<User>({
@@ -141,6 +138,14 @@ interface CarMethods {
   getDescription: () => string;
   isVintage: () => boolean;
 }
+
+// Define your schema
+const carSchema = {
+  _id: { type: String },
+  make: { type: String },
+  model: { type: String },
+  year: { type: Number }
+};
 
 // Create the model with the custom methods type
 const Car = kodzero.createModel<Car, CarMethods>({
@@ -224,16 +229,16 @@ const deleteResults = await User.deleteMany(['id1', 'id2', 'id3']);
 
 ## Validation
 
-The SDK uses the `validno` library for schema-based validation. When creating a model with a schema, you can validate your data:
+The SDK has built-in validation capabilities based on `validno` package ([Validno docs](https://validno.kodzero.pro/)). When creating a model with a schema, you can validate your data:
 
 ```javascript
 // Define a schema with validation rules
-const carSchema = new Schema({
+const carSchema = {
   _id: { type: String },
   make: { type: String, required: true },
   model: { type: String, required: true },
-  year: { type: Number, min: 1900, max: 2100 }
-});
+  year: { type: Number }
+};
 
 const Car = kodzero.createModel<Car>({
   collection: 'cars',
@@ -269,8 +274,20 @@ interface Profile {
   }
 }
 
+const profileSchema = {
+  _id: { type: String },
+  user: {
+    name: { type: String },
+    contact: {
+        email: { type: String },
+        phone: { type: String }
+    }
+  }
+};
+
 const Profile = kodzero.createModel<Profile>({
-  collection: 'profiles'
+  collection: 'profiles',
+  schema: profileSchema
 });
 
 const profile = new Profile({

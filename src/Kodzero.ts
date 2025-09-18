@@ -1,8 +1,8 @@
 import FluidFetch from "fluid-fetch"
-import { KodzeroAuth } from "./auth/index.js"
+import KodzeroAuth from "./auth/index.js"
 import createModel from "./model/createModel.js"
 import { ModelOptions } from "./model/BaseModel.js"
-import { TokensManagerClass } from "./auth/tokens.js"
+import TokensManagerClass from "./auth/tokens.js"
 
 interface Options {
     host: string

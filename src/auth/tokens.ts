@@ -2,7 +2,7 @@
  * TokensManagerClass is responsible for managing access and refresh tokens.
  * It provides methods to set, get, check existence, and clear tokens.
  */
-export class TokensManagerClass {
+class TokensManagerClass {
     access: string
     refresh: string
 
@@ -47,3 +47,5 @@ export class TokensManagerClass {
         this.refresh = ''
     }
 }
+
+export default TokensManagerClass

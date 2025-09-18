@@ -1,10 +1,10 @@
 import FluidFetch from "fluid-fetch";
 import { AuthOptions } from "./index.js";
-import { TokensManagerClass } from "./tokens.js";
+import TokensManagerClass from "./tokens.js";
 import BaseAuthSchema from "../schemas/baseAuth.js";
 import validateApiResponse from "../utils/validateApiResponse.js";
 
-export class KodzeroAuthBase {
+class KodzeroAuthBase {
     host: string;
     api: typeof FluidFetch
     tokensManager: TokensManagerClass
@@ -35,3 +35,5 @@ export class KodzeroAuthBase {
     signout = (...args: any[]): Promise<any> | void => {}
     verify = (...args: any[]): Promise<any> | void => {}
 }
+
+export default KodzeroAuthBase

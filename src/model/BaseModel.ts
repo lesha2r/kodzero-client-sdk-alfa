@@ -1,15 +1,14 @@
 import Schema from "validno";
 import FluidFetch from "fluid-fetch";
-
 import constants from "./constants.js";
 import validateApiResponse from "../utils/validateApiResponse.js";
 import BaseModelSchema from "../schemas/baseModel.js";
-import buildURL from "../utils/buildURL_rename.js";
+import buildURL from "../utils/buildURL.js";
 
 export interface ModelOptions {
     host: string
     collection: string
-    schema?: typeof Schema
+    schema?: Record<string, any>
 }
 
 /**
@@ -33,7 +32,7 @@ class BaseModel<T extends { _id?: string }> {
 
         this.host = options.host
         this.collection = options.collection
-        this.schema = options.schema
+        this.schema = options.schema ? new Schema({...options.schema}) : null
         this.api = api
         this.id = null;
     }

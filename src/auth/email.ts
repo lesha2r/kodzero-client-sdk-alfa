@@ -1,8 +1,8 @@
 import FluidFetch from "fluid-fetch"
 import { AuthOptions } from "./index.js"
-import { KodzeroAuthBase } from "./base.js"
-import { TokensManagerClass } from "./tokens.js"
-import buildURL from "../utils/buildURL_rename.js"
+import buildURL from "../utils/buildURL.js"
+import KodzeroAuthBase from "./base.js"
+import TokensManagerClass from "./tokens.js"
 
 interface KodzeroAuthEmailSignin {
     email: string
