@@ -188,13 +188,15 @@ const createModel = <
         }
 
         static async distinct(fields: string[], filter?: Record<string, any>): Promise<string[]> {
+            throw new Error('Distinct method is disabled in this SDK version'); // temporary disable
+
             if (!fields || fields.length === 0) {
                 throw new Error(constants.DistinctRequiresFieldsArray);
             }
 
             const distinctUrl = buildURL(Model.host, Model.collection, 'distinct')
 
-            const response = await Model.api.post(distinctUrl)
+            const response = await Model.api.get(distinctUrl)
                 .params({ fields: fields.join(','), filter: filter ? JSON.stringify(filter) : undefined })
                 .headers({ 'Content-Type': 'application/json' });
 
