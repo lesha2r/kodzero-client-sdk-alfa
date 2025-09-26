@@ -1,5 +1,6 @@
 const buildURL = (baseUrl: string, collection: string, id?: string): string => {
-    let url = `${baseUrl}/${collection}`;
+    let url = `${baseUrl}`
+    if (collection) url += `/${collection}`;
     if (id) url += `/${id}`;
     
     return url.replace(/\/+/g, '/').replace(':/', '://');

@@ -1,9 +1,10 @@
 import Schema from "validno";
 import FluidFetch from "fluid-fetch";
+
 import constants from "./constants.js";
-import validateApiResponse from "../utils/validateApiResponse.js";
-import BaseModelSchema from "../schemas/baseModel.js";
 import buildURL from "../utils/buildURL.js";
+import BaseModelSchema from "../schemas/baseModel.js";
+import validateApiResponse from "../utils/validateApiResponse.js";
 
 export interface ModelOptions {
     host: string
@@ -19,7 +20,7 @@ class BaseModel<T extends { _id?: string }> {
     collection: string
     modelData: T = {} as T
     schema?: typeof Schema
-    api: typeof FluidFetch
+    apiClient: typeof FluidFetch
 
     id: string | null;
 
@@ -27,13 +28,13 @@ class BaseModel<T extends { _id?: string }> {
     static collection: string
     static api: typeof FluidFetch
 
-    constructor(options: ModelOptions, api: typeof FluidFetch) {
+    constructor(options: ModelOptions, apiClient: typeof FluidFetch) {
         BaseModelSchema.validateOrThrow(options);
 
         this.host = options.host
         this.collection = options.collection
         this.schema = options.schema ? new Schema({...options.schema}) : null
-        this.api = api
+        this.apiClient = apiClient
         this.id = null;
     }
 
@@ -147,7 +148,7 @@ class BaseModel<T extends { _id?: string }> {
 
         const updateUrl = buildURL(this.host, this.collection, this.id)
        
-        const response = await this.api.patch(updateUrl, this._dataWithoutId())
+        const response = await this.apiClient.patch(updateUrl, this._dataWithoutId())
             .headers({ 'Content-Type': 'application/json' });
 
         await this._handleApiError(response);        
@@ -167,8 +168,7 @@ class BaseModel<T extends { _id?: string }> {
         }
 
         const deleteUrl = buildURL(this.host, this.collection, this.id);
-
-        const response = await this.api.delete(deleteUrl);
+        const response = await this.apiClient.delete(deleteUrl);
         await this._handleApiError(response);
 
         this._setId(null);
@@ -182,13 +182,11 @@ class BaseModel<T extends { _id?: string }> {
      */
     async create(): Promise<T> {
         const createUrl = buildURL(this.host, this.collection)
-        
-        const response = await this.api.post(createUrl, this._dataWithoutId())
+        const response = await this.apiClient.post(createUrl, this._dataWithoutId())
             .headers({ 'Content-Type': 'application/json' });
-
         await this._handleApiError(response);
-        const json = await response.json();
         
+        const json = await response.json();
         this._setModelData(json.result);
 
         return this.modelData

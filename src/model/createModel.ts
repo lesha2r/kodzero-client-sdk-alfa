@@ -4,6 +4,7 @@ import {KzResponseFindMany } from '../types/responses.js'
 import validateApiResponse from '../utils/validateApiResponse.js'
 import buildURL from '../utils/buildURL.js'
 import constants from './constants.js'
+import PaginatedResult from './PaginatedResult.js'
 
 export interface FindManyOptions {
     page: number
@@ -19,11 +20,11 @@ export interface FindManyOptions {
 const createModel = <
     T extends { _id?: string },
     M = {}
->(options: ModelOptions, api: typeof FluidFetch) => {
+>(options: ModelOptions, apiClient: typeof FluidFetch) => {
     const Model = class extends BaseModel<T> {
         static host = options.host
         static collection = options.collection
-        static api = api
+        static apiClient = apiClient
 
         static async _handleApiError(response: Response) {
             return validateApiResponse(response)
@@ -62,7 +63,7 @@ const createModel = <
 
             const getUrl = buildURL(Model.host, Model.collection, id)
 
-            const response = await Model.api.get(getUrl);
+            const response = await Model.apiClient.get(getUrl);
             await Model._handleApiError(response);
 
             const data = await response.json();
@@ -74,18 +75,40 @@ const createModel = <
             
             const params = {...options} as Record<string, any>;
 
-            const response = await Model.api.get(getUrl).params(params);
+            const response = await Model.apiClient.get(getUrl).params(params);
             await Model._handleApiError(response);
 
             const data: KzResponseFindMany<T> = await response.json();
             return data.result.found;
         }
 
+        static async findManyPaginated(
+            options: FindManyOptions | {} = {},
+            page: number = 1,
+            perPage: number = 25
+        ): Promise<any> {
+            if (!page || page < 1) throw new Error('Page number must be greater than 0');
+
+            const getUrl = buildURL(Model.host, Model.collection)
+            const params = {...options, page, perPage} as Record<string, any>;
+            const response = await Model.apiClient.get(getUrl).params(params);
+            await Model._handleApiError(response);
+
+            const data: KzResponseFindMany<T> = await response.json();
+
+            return new PaginatedResult({
+                data: data.result.found,
+                state: data.result,
+                options,
+                findManyFunction: Model.findManyPaginated
+            })
+        }
+
         static async create(data: T): Promise<T> {
             const createUrl = buildURL(Model.host, Model.collection)
             const {_id, ...dataWithoutId} = data as T & {_id?: string};
 
-            const response = await Model.api.post(createUrl)
+            const response = await Model.apiClient.post(createUrl)
                 .body(dataWithoutId)
                 .headers({
                     'Content-Type': 'application/json'
@@ -109,7 +132,7 @@ const createModel = <
                 return rest;
             });
             
-            const response = await Model.api.post(createUrl)
+            const response = await Model.apiClient.post(createUrl)
                 .body(dataWithoutId)
                 .headers({
                     'Content-Type': 'application/json'
@@ -127,7 +150,7 @@ const createModel = <
             
             const updateUrl = buildURL(Model.host, Model.collection, id)
             const {_id, ...dataWithoutId} = data as Partial<T> & {_id?: string};
-            const response = await Model.api.patch(updateUrl)
+            const response = await Model.apiClient.patch(updateUrl)
                 .body(dataWithoutId)
                 .headers({ 'Content-Type': 'application/json' });
 
@@ -148,7 +171,7 @@ const createModel = <
 
             const updateUrl = buildURL(Model.host, Model.collection) + '/batch'
 
-            const response = await Model.api.patch(updateUrl)
+            const response = await Model.apiClient.patch(updateUrl)
                 .body(updates)
                 .headers({ 'Content-Type': 'application/json' });
 
@@ -163,7 +186,7 @@ const createModel = <
 
             const deleteUrl = buildURL(Model.host, Model.collection, id)
             
-            const response = await Model.api.delete(deleteUrl);
+            const response = await Model.apiClient.delete(deleteUrl);
             await Model._handleApiError(response);
             
             const json = await response.json();
@@ -171,13 +194,11 @@ const createModel = <
         }
 
         static async deleteMany(ids: string[]): Promise<Record<string, boolean>> {
-            if (!ids || ids.length === 0) {
-                throw new Error(constants.RequiresIdsArray);
-            }
+            if (!ids || ids.length === 0) throw new Error(constants.RequiresIdsArray);
 
             const deleteUrl = buildURL(Model.host, Model.collection) + '/batch'
             
-            const response = await Model.api.delete(deleteUrl)
+            const response = await Model.apiClient.delete(deleteUrl)
                 .body({ ids })
                 .headers({ 'Content-Type': 'application/json' });
 
@@ -196,7 +217,7 @@ const createModel = <
 
             const distinctUrl = buildURL(Model.host, Model.collection, 'distinct')
 
-            const response = await Model.api.get(distinctUrl)
+            const response = await Model.apiClient.get(distinctUrl)
                 .params({ fields: fields.join(','), filter: filter ? JSON.stringify(filter) : undefined })
                 .headers({ 'Content-Type': 'application/json' });
 
@@ -207,7 +228,7 @@ const createModel = <
         }
 
         constructor(data: T) {
-            super(options, api)
+            super(options, apiClient)
 
             this.modelData = {...data, _id: null}
             this.id = null;
@@ -222,6 +243,7 @@ const createModel = <
         registerMethod<K extends keyof M>(name: K, fn: M[K]): void;
         find(id: string): Promise<T>;
         findMany(options?: FindManyOptions | {}): Promise<T[]>;
+        findManyPaginated(options?: FindManyOptions | {}, page?: number, perPage?: number): Promise<PaginatedResult<T>>;
         create(data: T): Promise<T>;
         createMany(data: T[]): Promise<T[]>;
         update(id: string, data: Partial<T>): Promise<T>;

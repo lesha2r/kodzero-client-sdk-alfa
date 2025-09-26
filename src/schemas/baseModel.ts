@@ -23,7 +23,7 @@ class BaseModelSchema {
 
         if (!validation.ok) {
             throw new KodzeroValidationError(
-                'Invalid model options: ' + validation.failed.join(', '),
+                'Invalid model options: ' + validation.failed.join(', '),   // TODO: to constants
                 validation.errors
             );
         }

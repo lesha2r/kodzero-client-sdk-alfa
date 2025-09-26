@@ -1,6 +1,7 @@
 import Schema from 'validno'
 import KodzeroValidationError from '../errors/KodzeroValidationError.js';
 
+// TODO: сделать класс конструктор для таких реализаций?
 class BaseAuthSchema {
     // Validation schema for BaseAuth class constructor options
     static schema = new Schema({
@@ -16,7 +17,7 @@ class BaseAuthSchema {
 
         if (!validation.ok) {
             throw new KodzeroValidationError(
-                'Invalid auth options: ' + validation.failed.join(', '),
+                'Invalid auth options: ' + validation.failed.join(', '),  // TODO: to constants
                 validation.errors
             );
         }
