@@ -19,9 +19,9 @@ class KodzeroAuth extends KodzeroAuthBase {
         this.email = new KodzeroAuthEmail(options, api, tokensManager)
         
         // Default methods set to email strategy methods
-        this.signin = this.email.signin
-        this.signup = this.email.signup
-        this.signout = this.email.signout
+        this.login = this.email.login
+        this.register = this.email.register
+        this.logout = this.email.logout
         this.verify = this.email.verify
         this.refresh = this.email.refresh
 

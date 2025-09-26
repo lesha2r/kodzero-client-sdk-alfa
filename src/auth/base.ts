@@ -29,10 +29,10 @@ class KodzeroAuthBase {
      * Base auth methods.
      * These will be overridden by specific strategies (e.g. email, social, etc.)
      */
-    signin = (...args: any[]): Promise<any> | void => {}
-    signup = (...args: any[]): Promise<any> | void => {}
+    login = (...args: any[]): Promise<any> | void => {}
+    register = (...args: any[]): Promise<any> | void => {}
     refresh = (...args: any[]): Promise<any> | void => {}
-    signout = (...args: any[]): Promise<any> | void => {}
+    logout = (...args: any[]): Promise<any> | void => {}
     verify = (...args: any[]): Promise<any> | void => {}
 }
 

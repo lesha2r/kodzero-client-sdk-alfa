@@ -4,7 +4,7 @@ import buildURL from "../utils/buildURL.js"
 import KodzeroAuthBase from "./base.js"
 import TokensManagerClass from "./tokens.js"
 
-interface KodzeroAuthEmailSignin {
+interface KodzeroAuthEmailLogin {
     email: string
     password: string
 }
@@ -30,11 +30,11 @@ class KodzeroAuthEmail extends KodzeroAuthBase {
     }
 
     /**
-     * Sign in with email and password. On success, sets tokens in TokensManager automatically
+     * Login with email and password. On success, sets tokens in TokensManager automatically
      */
-    signin = async (input: KodzeroAuthEmailSignin): Promise<{access: string, refresh: string}> => {
-        const url = buildURL(this.host, this.collection + '/signin')
-       
+    login = async (input: KodzeroAuthEmailLogin): Promise<{access: string, refresh: string}> => {
+        const url = buildURL(this.host, this.collection + '/login')
+
         const response = await this.api.post(url, input)
             .headers({ 'Content-Type': 'application/json' });
 
@@ -49,10 +49,10 @@ class KodzeroAuthEmail extends KodzeroAuthBase {
     }
 
     /**
-     *  Sign up with email and password. On success, sets tokens in TokensManager automatically
+     *  Register with email and password. On success, sets tokens in TokensManager automatically
      */
-    signup = async (userData: Record<string, string>): Promise<Record<string, any>> => {
-        const url = buildURL(this.host, this.collection + '/signup')
+    register = async (userData: Record<string, string>): Promise<Record<string, any>> => {
+        const url = buildURL(this.host, this.collection + '/register')
         const response = await this.api.post(url, userData)
             .headers({ 'Content-Type': 'application/json' });
             
@@ -102,11 +102,11 @@ class KodzeroAuthEmail extends KodzeroAuthBase {
     }
 
     /**
-     * Sign out the user
+     * Logout the user
      * If success, clears tokens in TokensManager automatically
      */
-    signout = async (): Promise<any> => {
-        const url = buildURL(this.host, this.collection + '/signout')
+    logout = async (): Promise<any> => {
+        const url = buildURL(this.host, this.collection + '/logout')
         const response = await this.api.post(url, {})
             .headers({ 'Content-Type': 'application/json' });
 

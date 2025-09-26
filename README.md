@@ -18,14 +18,14 @@ const kodzero = new Kodzero({
   host: 'https://api.your-backend.com'
 });
 
-// Sign up a new user
-const signupResult = await kodzero.auth.signup({
+// New user registration
+const registerResult = await kodzero.auth.register({
   email: 'user@example.com',
   password: 'secure_password'
 });
 
-// Sign in
-const signinResult = await kodzero.auth.signin({
+// Login
+const loginResult = await kodzero.auth.login({
   email: 'user@example.com',
   password: 'secure_password'
 });
@@ -36,8 +36,8 @@ const verified = await kodzero.auth.verify();
 // Refresh the token
 const refreshed = await kodzero.auth.refresh();
 
-// Sign out
-await kodzero.auth.signout();
+// Logout
+await kodzero.auth.logout();
 
 // Manually set tokens (useful for persisting sessions)
 kodzero.auth.setTokens('access_token', 'refresh_token');
