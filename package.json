@@ -1,6 +1,6 @@
 {
   "name": "kodzero-front-sdk-alfa",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "dist/index.js",
   "scripts": {
     "tsc": "tsc -b src/",
