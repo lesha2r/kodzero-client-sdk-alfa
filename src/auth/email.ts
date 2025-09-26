@@ -9,6 +9,42 @@ interface KodzeroAuthEmailLogin {
     password: string
 }
 
+interface SuccessResponse<Result> {
+    ok: true
+    result: Result
+}
+
+interface Tokens {
+    access: string
+    refresh: string
+}
+
+interface AuthUser {
+    _id: string
+    email: string
+    name: string
+    workspace: string
+    createdAt: string
+    updatedAt: string
+    [key: string]: any
+}
+
+type RegisterResponse = SuccessResponse<{
+    user: AuthUser
+    tokens: Tokens
+    session: number
+}>
+
+type LoginResponse = SuccessResponse<{
+    user: AuthUser
+    tokens: Tokens
+    session: number
+}>
+
+type VerifyResponse = SuccessResponse<{}>
+type RefreshResponse = SuccessResponse<{tokens: Tokens}>
+type LogoutResponse = SuccessResponse<boolean>
+
 class KodzeroAuthEmail extends KodzeroAuthBase {
     tokensManager: TokensManagerClass
     collection: "auth/password"
@@ -32,48 +68,48 @@ class KodzeroAuthEmail extends KodzeroAuthBase {
     /**
      * Login with email and password. On success, sets tokens in TokensManager automatically
      */
-    login = async (input: KodzeroAuthEmailLogin): Promise<{access: string, refresh: string}> => {
+    login = async (input: KodzeroAuthEmailLogin): Promise<LoginResponse['result']> => {
         const url = buildURL(this.host, this.collection + '/login')
 
         const response = await this.api.post(url, input)
             .headers({ 'Content-Type': 'application/json' });
 
         await this._handleApiError(response);        
-        const json = await response.json();
+        const json: LoginResponse = await response.json();
 
-        if (json.ok && json.tokens && json.tokens.access && json.tokens.refresh) {        
-            this._setTokens(json.tokens.access, json.tokens.refresh);
+        if (json.ok && json.result && json.result.tokens.access && json.result.tokens.refresh) {
+            this._setTokens(json.result.tokens.access, json.result.tokens.refresh);
         }
     
-        return json.tokens
+        return json.result
     }
 
     /**
      *  Register with email and password. On success, sets tokens in TokensManager automatically
      */
-    register = async (userData: Record<string, string>): Promise<Record<string, any>> => {
+    register = async (userData: Record<string, string>): Promise<RegisterResponse['result']> => {
         const url = buildURL(this.host, this.collection + '/register')
         const response = await this.api.post(url, userData)
             .headers({ 'Content-Type': 'application/json' });
             
         await this._handleApiError(response);        
-        const json = await response.json();
+        const json: RegisterResponse = await response.json();
 
         if (json.ok && json.result && json.result.tokens.access && json.result.tokens.refresh) {
             this._setTokens(json.result.tokens.access, json.result.tokens.refresh);
         }
 
-        return json.result.user
+        return json.result
     }
 
     /**
      * Verify current access token
      */
-    verify = async (): Promise<any> => {
+    verify = async (): Promise<VerifyResponse['result']> => {
         try {
             const url = buildURL(this.host, this.collection + '/verify')
             const response = await this.api.get(url)
-            const json = await response.json();
+            const json: VerifyResponse = await response.json();
 
             return json.ok ? true : false
         } catch (error) {
@@ -86,32 +122,32 @@ class KodzeroAuthEmail extends KodzeroAuthBase {
      * Refresh access token using refresh token
      * If success, updates access token in TokensManager automatically
      */
-    refresh = async (): Promise<any> => {
+    refresh = async (): Promise<RefreshResponse['result'] | {tokens: null}> => {
         const url = buildURL(this.host, this.collection + '/refresh')
         const response = await this.api.post(url, { refresh: this.tokensManager.refresh })
             .headers({ 'Content-Type': 'application/json' });
 
         await this._handleApiError(response);        
-        const json = await response.json(); 
+        const json: RefreshResponse = await response.json(); 
         
-        if (json.ok && json.tokens && json.tokens.access) {
-            this.tokensManager.setAccess(json.tokens.access)
+        if (json.ok && json.result?.tokens && json.result.tokens.access) {
+            this.tokensManager.setAccess(json.result.tokens.access)
         }
 
-        return json.ok ? true : false
+        return json.ok ? { tokens: json.result.tokens } : { tokens: null }
     }
 
     /**
      * Logout the user
      * If success, clears tokens in TokensManager automatically
      */
-    logout = async (): Promise<any> => {
+    logout = async (): Promise<boolean> => {
         const url = buildURL(this.host, this.collection + '/logout')
         const response = await this.api.post(url, {})
             .headers({ 'Content-Type': 'application/json' });
 
         await this._handleApiError(response);        
-        const json = await response.json(); 
+        const json: LogoutResponse = await response.json(); 
 
         if (json.ok) this.tokensManager.clear()
 
