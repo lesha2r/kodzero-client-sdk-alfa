@@ -36,7 +36,7 @@ const createModel = <
             
             const getUrl = buildURL(Model.host, Model.collection, id)
             
-            const response = await Model.api.get(getUrl);
+            const response = await Model.apiClient.get(getUrl);
             await Model._handleApiError(response);
 
             const json = await response.json();
