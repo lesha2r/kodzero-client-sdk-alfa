@@ -15,8 +15,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "fluid-fetch": "^0.0.2",
-    "validno": "^0.3.5"
+    "fluid-fetch": "^0.0.3",
+    "validno": "^0.4.1"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.27.1",
