@@ -11,7 +11,7 @@ class BaseModelSchema {
             type: String
         },
         schema: {
-            type: Schema,
+            type: Object,
             required: false
         }
     })

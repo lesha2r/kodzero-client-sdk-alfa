@@ -18,7 +18,7 @@ export interface FindManyOptions {
  * Creates custom model with the specified schema, API options, etc.
  */
 const createModel = <
-    T extends { _id?: string },
+    T extends { _id: string | null},
     M = {}
 >(options: ModelOptions, apiClient: typeof FluidFetch) => {
     const Model = class extends BaseModel<T> {
@@ -40,8 +40,11 @@ const createModel = <
             await Model._handleApiError(response);
 
             const json = await response.json();
+            const model = new Model(json.result);
+            model.modelData._id = json.result._id;
+            model.id = json.result._id;
             
-            return new Model(json.result);
+            return model;
         }
 
         /**
@@ -106,7 +109,7 @@ const createModel = <
 
         static async create(data: T): Promise<T> {
             const createUrl = buildURL(Model.host, Model.collection)
-            const {_id, ...dataWithoutId} = data as T & {_id?: string};
+            const {_id, ...dataWithoutId} = data as T & {_id: string | null};
 
             const response = await Model.apiClient.post(createUrl)
                 .body(dataWithoutId)
@@ -230,8 +233,9 @@ const createModel = <
         constructor(data: T) {
             super(options, apiClient)
 
-            this.modelData = {...data, _id: null}
-            this.id = null;
+            this.modelData = {...data}
+            this.modelData._id = data._id || null;
+            this.id = data._id || null;
         }
     }
 

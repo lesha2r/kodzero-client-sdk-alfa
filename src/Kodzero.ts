@@ -27,7 +27,7 @@ class Kodzero {
         })
     }
 
-    createModel = <T extends { _id?: string }, M = {}>(options: Omit<ModelOptions, 'host'>) => {
+    createModel = <T extends { _id: string | null }, M = {}>(options: Omit<ModelOptions, 'host'>) => {
         return createModel<T, M>({...options, host: this.host}, this.api)
     }
 }
