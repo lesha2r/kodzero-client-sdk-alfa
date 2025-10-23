@@ -15,7 +15,7 @@ export interface ModelOptions {
 /**
  * Base model constructor that expose main methods to work with user-created model
  */
-class BaseModel<T extends { _id?: string }> {
+class BaseModel<T extends { _id: string | null }> {
     host: string
     collection: string
     modelData: T = {} as T
