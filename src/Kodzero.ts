@@ -6,19 +6,25 @@ import TokensManagerClass from "./auth/tokens.js"
 
 interface Options {
     host: string
+    collection: string
 }
 
 class Kodzero {
     host: string
+    collection: string
     auth: KodzeroAuth
     tokensManager: TokensManagerClass
     api: typeof FluidFetch
 
     constructor (options: Options) {
         this.tokensManager = new TokensManagerClass('', '')
+        this.collection = options.collection
         this.host = options.host
         this.api = new FluidFetch()
-        this.auth = new KodzeroAuth({host: options.host}, this.api, this.tokensManager)
+        this.auth = new KodzeroAuth({
+            host: options.host,
+            collection: options.collection
+        }, this.api, this.tokensManager)
 
         this.api.middlewares.request.use((req: any) => {
             const accessToken = this.tokensManager.access

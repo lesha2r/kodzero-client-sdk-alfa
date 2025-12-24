@@ -47,13 +47,13 @@ type LogoutResponse = SuccessResponse<boolean>
 
 class KodzeroAuthEmail extends KodzeroAuthBase {
     tokensManager: TokensManagerClass
-    collection: "auth/password"
+    collection: string
 
     constructor(options: AuthOptions, api: typeof FluidFetch, tokensManager: TokensManagerClass) {
         super(options, api, tokensManager)
 
         this.tokensManager = tokensManager
-        this.collection = "auth/password"
+        this.collection = `${options.collection}/password`
     }
 
     /**

@@ -5,6 +5,7 @@ import TokensManagerClass from "./tokens.js";
 
 export interface AuthOptions {
     host: string
+    collection: string
 }
 
 class KodzeroAuth extends KodzeroAuthBase {
