@@ -16,7 +16,7 @@
   "description": "",
   "dependencies": {
     "fluid-fetch": "^0.0.3",
-    "validno": "^0.4.1"
+    "validno": "^0.4.3"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.27.1",
