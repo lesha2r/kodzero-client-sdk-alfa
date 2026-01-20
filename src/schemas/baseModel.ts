@@ -1,5 +1,5 @@
 import Schema from 'validno'
-import KodzeroValidationError from '../errors/KodzeroValidationError.js';
+import KodzeroOptionsError from '../errors/KodzeroOptionsError.js';
 
 class BaseModelSchema {
     // Validation schema for BaseModel class constructor options
@@ -22,7 +22,7 @@ class BaseModelSchema {
         const validation = BaseModelSchema.schema.validate(options);
 
         if (!validation.ok) {
-            throw new KodzeroValidationError(
+            throw new KodzeroOptionsError(
                 'Invalid model options: ' + validation.failed.join(', '),   // TODO: to constants
                 validation.errors
             );
