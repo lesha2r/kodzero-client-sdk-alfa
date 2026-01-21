@@ -3,27 +3,28 @@ import KodzeroAuth from "./auth/index.js"
 import createModel from "./model/createModel.js"
 import { ModelOptions } from "./model/BaseModel.js"
 import TokensManagerClass from "./auth/tokens.js"
+import { ReservedKeyNames } from "./constants/reservedKeyNames.js"
 
 interface Options {
     host: string
-    authCollection: string
+    authCollection?: string
 }
 
 class Kodzero {
     host: string
-    authCollection: string
-    auth: KodzeroAuth
+    authCollection: string | null
+    auth: KodzeroAuth | null
     tokensManager: TokensManagerClass
     api: typeof FluidFetch
 
     constructor (options: Options) {
         this.tokensManager = new TokensManagerClass('', '')
-        this.authCollection = options.authCollection
+        this.authCollection = options.authCollection || null
         this.host = options.host
         this.api = new FluidFetch()
-        this.auth = new KodzeroAuth({
+        this.auth = !this.authCollection ? null : new KodzeroAuth({
             host: options.host,
-            collection: options.authCollection
+            collection: this.authCollection
         }, this.api, this.tokensManager)
 
         this.api.middlewares.request.use((req: any) => {
@@ -33,7 +34,7 @@ class Kodzero {
         })
     }
 
-    createModel = <T extends { _id: string | null }, M = {}>(options: Omit<ModelOptions, 'host'>) => {
+    createModel = <T extends { [ReservedKeyNames.ID]: string | null }, M = {}>(options: Omit<ModelOptions, 'host'>) => {
         return createModel<T, M>({...options, host: this.host}, this.api)
     }
 }

@@ -5,6 +5,7 @@ import constants from "./constants.js";
 import buildURL from "../utils/buildURL.js";
 import BaseModelSchema from "../schemas/baseModel.js";
 import validateApiResponse from "../utils/validateApiResponse.js";
+import { ReservedKeyNames } from "../constants/reservedKeyNames.js";
 
 export interface ModelOptions {
     host: string
@@ -15,7 +16,7 @@ export interface ModelOptions {
 /**
  * Base model constructor that expose main methods to work with user-created model
  */
-class BaseModel<T extends { _id: string | null }> {
+class BaseModel<T extends { [ReservedKeyNames.ID]: string | null }> {
     host: string
     collection: string
     modelData: T = {} as T
@@ -52,7 +53,7 @@ class BaseModel<T extends { _id: string | null }> {
      */
     _setModelData = (data: T) => {
         this.modelData = data;
-        this._setId(data?._id || null);
+        this._setId(data && ReservedKeyNames.ID in data ? data[ReservedKeyNames.ID] : null);
     }
 
     /**
@@ -72,12 +73,12 @@ class BaseModel<T extends { _id: string | null }> {
 
     /**
      * Private
-     * Getter for model's data (this.modelData) excluding "_id" field
+     * Getter for model's data (this.modelData) excluding ReservedKeyNames.ID field
      * Used to 
      */
-    _dataWithoutId(): Omit<T, "_id"> | {} {
-        if (typeof this.modelData === 'object' && this.modelData !== null && '_id' in this.modelData) {
-            const { _id, ...dataWithoutId } = this.modelData as T;
+    _dataWithoutId(): Omit<T, typeof ReservedKeyNames.ID> | {} {
+        if (typeof this.modelData === 'object' && this.modelData !== null && ReservedKeyNames.ID in this.modelData) {
+            const { [ReservedKeyNames.ID]: _, ...dataWithoutId } = this.modelData as T;
             return dataWithoutId;
         }
 
@@ -132,14 +133,14 @@ class BaseModel<T extends { _id: string | null }> {
             throw new Error(constants.NoSchema);
         }
 
-        const keysToValidate = Object.keys(this.schema.definition).filter(k => k !== '_id')
+        const keysToValidate = Object.keys(this.schema.definition).filter(k => k !== ReservedKeyNames.ID);
         const validationResult = schema.validate(this._dataWithoutId(), keysToValidate);
 
         return validationResult
     }
 
     /**
-     * Sends patch request to update document data by it's _id
+     * Sends patch request to update document data by it's ReservedKeyNames.ID
      */
     async update(): Promise<T> {
         if (!this.id) {
@@ -160,7 +161,7 @@ class BaseModel<T extends { _id: string | null }> {
     }
 
     /**
-     * Sends delete request to delete document by it's _id
+     * Sends delete request to delete document by it's ReservedKeyNames.ID
      */
     async delete(): Promise<boolean> {
         if (!this.id) {
@@ -193,7 +194,7 @@ class BaseModel<T extends { _id: string | null }> {
     }
 
     /**
-     * Updates document or inserts it depending on presense of _id (this.id)
+     * Updates document or inserts it depending on presense of this.id
      */
     async save(): Promise<T> {
         if (this.id) {

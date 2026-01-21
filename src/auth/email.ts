@@ -3,6 +3,7 @@ import { AuthOptions } from "./index.js"
 import buildURL from "../utils/buildURL.js"
 import KodzeroAuthBase from "./base.js"
 import TokensManagerClass from "./tokens.js"
+import { ReservedKeyNames } from "../constants/reservedKeyNames.js"
 
 interface KodzeroAuthEmailLogin {
     email: string
@@ -20,12 +21,12 @@ interface Tokens {
 }
 
 interface AuthUser {
-    _id: string
-    email: string
+    [ReservedKeyNames.ID]: string
+    [ReservedKeyNames.Email]: string
+    [ReservedKeyNames.Workspace]: string
+    [ReservedKeyNames.CreatedAt]: string
+    [ReservedKeyNames.UpdatedAt]: string
     name: string
-    workspace: string
-    createdAt: string
-    updatedAt: string
     [key: string]: any
 }
 

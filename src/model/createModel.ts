@@ -5,6 +5,7 @@ import validateApiResponse from '../utils/validateApiResponse.js'
 import buildURL from '../utils/buildURL.js'
 import constants from './constants.js'
 import PaginatedResult from './PaginatedResult.js'
+import { ReservedKeyNames } from '../constants/reservedKeyNames.js'
 
 export interface FindManyOptions {
     page: number
@@ -18,7 +19,7 @@ export interface FindManyOptions {
  * Creates custom model with the specified schema, API options, etc.
  */
 const createModel = <
-    T extends { _id: string | null},
+    T extends { [ReservedKeyNames.ID]: string | null},
     M = {}
 >(options: ModelOptions, apiClient: typeof FluidFetch) => {
     const Model = class extends BaseModel<T> {
@@ -41,8 +42,8 @@ const createModel = <
 
             const json = await response.json();
             const model = new Model(json.result);
-            model.modelData._id = json.result._id;
-            model.id = json.result._id;
+            model.modelData[ReservedKeyNames.ID] = json.result[ReservedKeyNames.ID];
+            model.id = json.result[ReservedKeyNames.ID];
             
             return model;
         }
@@ -109,7 +110,7 @@ const createModel = <
 
         static async create(data: T): Promise<T> {
             const createUrl = buildURL(Model.host, Model.collection)
-            const {_id, ...dataWithoutId} = data as T & {_id: string | null};
+            const {[ReservedKeyNames.ID]: _, ...dataWithoutId} = data as T & {[ReservedKeyNames.ID]: string | null};
 
             const response = await Model.apiClient.post(createUrl)
                 .body(dataWithoutId)
@@ -131,7 +132,7 @@ const createModel = <
             const createUrl = buildURL(Model.host, Model.collection) + '/batch'
 
             const dataWithoutId = records.map(item => {
-                const {_id, ...rest} = item as T & {_id?: string};
+                const {[ReservedKeyNames.ID]: _, ...rest} = item as T & {[ReservedKeyNames.ID]?: string};
                 return rest;
             });
             
@@ -152,7 +153,7 @@ const createModel = <
             }
             
             const updateUrl = buildURL(Model.host, Model.collection, id)
-            const {_id, ...dataWithoutId} = data as Partial<T> & {_id?: string};
+            const {[ReservedKeyNames.ID]: _, ...dataWithoutId} = data as Partial<T> & {[ReservedKeyNames.ID]?: string};
             const response = await Model.apiClient.patch(updateUrl)
                 .body(dataWithoutId)
                 .headers({ 'Content-Type': 'application/json' });
@@ -168,8 +169,8 @@ const createModel = <
                 throw new Error(constants.DataTypeNotArray);
             }
 
-            if (updates.some(update => !update._id)) {
-                throw new Error("All updates must have an _id");
+            if (updates.some(update => !update[ReservedKeyNames.ID])) {
+                throw new Error(`All updates must have an ${ReservedKeyNames.ID}`);
             }
 
             const updateUrl = buildURL(Model.host, Model.collection) + '/batch'
@@ -234,8 +235,8 @@ const createModel = <
             super(options, apiClient)
 
             this.modelData = {...data}
-            this.modelData._id = data._id || null;
-            this.id = data._id || null;
+            this.modelData[ReservedKeyNames.ID] = data[ReservedKeyNames.ID] || null;
+            this.id = data[ReservedKeyNames.ID] || null;
         }
     }
 

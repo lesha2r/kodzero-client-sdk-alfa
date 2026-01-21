@@ -1,14 +1,14 @@
 {
-  "name": "kodzero-front-sdk-alfa",
-  "version": "0.0.17",
+  "name": "kodzero-sdk",
+  "version": "0.0.18",
   "main": "dist/index.js",
   "scripts": {
     "tsc": "tsc -b src/",
     "tsc-watch": "tsc --b --watch src/",
-    "tscw": "tsc --b --watch src/",
-    "dev": "nodemon dist/dev.js",
+    "tscw": "npm run tsc-watch",
     "test": "npx jest",
-    "prepare": "npm version patch && npm run tsc"
+    "prepare": "npm run tsc",
+    "dev": "nodemon dist/dev.js"
   },
   "type": "module",
   "author": "lesha2r",
