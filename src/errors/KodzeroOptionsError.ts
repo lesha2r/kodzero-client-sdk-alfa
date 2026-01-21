@@ -1,4 +1,4 @@
-class KodzeroValidationError extends Error {
+class KodzeroOptionsError extends Error {
     errors: string[]
 
     constructor(message: string, errors: string[] = []) {
@@ -9,4 +9,4 @@ class KodzeroValidationError extends Error {
     }
 }
 
-export default KodzeroValidationError
+export default KodzeroOptionsError
