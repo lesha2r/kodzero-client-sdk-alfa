@@ -1,0 +1,30 @@
+{
+  "name": "kodzero-sdk",
+  "version": "0.0.19",
+  "main": "dist/index.js",
+  "scripts": {
+    "tsc": "tsc -b src/",
+    "tsc-watch": "tsc --b --watch src/",
+    "tscw": "npm run tsc-watch",
+    "test": "npx jest",
+    "prepare": "npm run tsc",
+    "dev": "nodemon dist/dev.js"
+  },
+  "type": "module",
+  "author": "lesha2r",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "fluid-fetch": "^0.0.3",
+    "validno": "^0.4.3"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.27.1",
+    "@types/express": "^5.0.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.14.0",
+    "eslint": "^9.24.0",
+    "jest": "^30.1.3",
+    "ts-jest": "^29.4.3"
+  }
+}
