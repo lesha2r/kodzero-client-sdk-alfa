@@ -7,6 +7,7 @@
     "tsc-watch": "tsc --b --watch src/",
     "tscw": "npm run tsc-watch",
     "test": "npx jest",
+    "test:coverage": "npx jest --coverage",
     "prepare": "npm run tsc",
     "dev": "nodemon dist/dev.js"
   },
