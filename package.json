@@ -9,7 +9,11 @@
     "test": "npx jest",
     "test:coverage": "npx jest --coverage",
     "prepare": "npm run tsc",
-    "dev": "nodemon dist/dev.js"
+    "dev": "nodemon dist/dev.js",
+    "release:patch": "npm version patch && npm publish",
+    "release:minor": "npm version minor && npm publish",
+    "release:major": "npm version major && npm publish",
+    "release:beta": "npm version prerelease --preid=beta && npm publish --tag beta"
   },
   "type": "module",
   "author": "lesha2r",
