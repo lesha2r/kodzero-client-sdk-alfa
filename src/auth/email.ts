@@ -54,7 +54,7 @@ class KodzeroAuthEmail extends KodzeroAuthBase {
         super(options, api, tokensManager)
 
         this.tokensManager = tokensManager
-        this.collection = `${options.collection}/password`
+        this.collection = `${options.collection}/auth/password`
     }
 
     /**
