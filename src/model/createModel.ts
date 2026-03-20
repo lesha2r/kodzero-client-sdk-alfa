@@ -6,6 +6,7 @@ import buildURL from '../utils/buildURL.js'
 import constants from './constants.js'
 import PaginatedResult from './PaginatedResult.js'
 import { ReservedKeyNames } from '../constants/reservedKeyNames.js'
+import { parseDataBySchema } from '../utils/parseDataBySchema.js'
 
 export interface FindManyOptions {
     page: number
@@ -22,6 +23,15 @@ const createModel = <
     T extends { [ReservedKeyNames.ID]: string | null},
     M = {}
 >(options: ModelOptions, apiClient: typeof FluidFetch) => {
+    const schemaDef = options.schema || null;
+
+    const _parseData = (data: T): T => {
+        if (!schemaDef) return data;
+        return parseDataBySchema(data as Record<string, any>, schemaDef) as T;
+    };
+
+    const _parseDataArray = (items: T[]): T[] => items.map(_parseData);
+
     const Model = class extends BaseModel<T> {
         static host = options.host
         static collection = options.collection
@@ -71,7 +81,7 @@ const createModel = <
             await Model._handleApiError(response);
 
             const data = await response.json();
-            return data.result;
+            return _parseData(data.result);
         }
 
         static async findMany(options?: FindManyOptions | {}): Promise<T[]> {
@@ -83,7 +93,7 @@ const createModel = <
             await Model._handleApiError(response);
 
             const data: KzResponseFindMany<T> = await response.json();
-            return data.result.found;
+            return _parseDataArray(data.result.found);
         }
 
         static async findManyPaginated(
@@ -101,7 +111,7 @@ const createModel = <
             const data: KzResponseFindMany<T> = await response.json();
 
             return new PaginatedResult({
-                data: data.result.found,
+                data: _parseDataArray(data.result.found),
                 state: data.result,
                 options,
                 findManyFunction: Model.findManyPaginated
@@ -121,7 +131,7 @@ const createModel = <
             await Model._handleApiError(response);
 
             const json = await response.json();
-            return json.result
+            return _parseData(json.result)
         }
 
         static async createMany(records: T[]): Promise<T[]> {
@@ -144,7 +154,7 @@ const createModel = <
             await Model._handleApiError(response);
 
             const json = await response.json();
-            return json.result
+            return _parseDataArray(json.result as T[])
         }
 
         static async update(id: string, data: Partial<T>): Promise<T> {
@@ -161,7 +171,7 @@ const createModel = <
             await Model._handleApiError(response);        
             const json = await response.json();
             
-            return json.result;
+            return _parseData(json.result);
         }
 
         static async updateMany(updates: Partial<T>[]): Promise<T[]> {
@@ -182,7 +192,7 @@ const createModel = <
             await Model._handleApiError(response);        
             const json = await response.json();
             
-            return json.result;
+            return _parseDataArray(json.result as T[]);
         }
 
         static async delete(id: string): Promise<boolean> {
@@ -234,9 +244,7 @@ const createModel = <
         constructor(data: T) {
             super(options, apiClient)
 
-            this.modelData = {...data}
-            this.modelData[ReservedKeyNames.ID] = data[ReservedKeyNames.ID] || null;
-            this.id = data[ReservedKeyNames.ID] || null;
+            this._setModelData(data);
         }
     }
 
