@@ -1,4 +1,4 @@
 import Kodzero from "./Kodzero.js";
-export type { ModelClass, ModelInstance } from "./model/createModel.js";
+export { JsonField } from "./utils/parseDataBySchema.js";
 
 export default Kodzero

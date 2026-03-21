@@ -6,6 +6,7 @@ import buildURL from "../utils/buildURL.js";
 import BaseModelSchema from "../schemas/baseModel.js";
 import validateApiResponse from "../utils/validateApiResponse.js";
 import { ReservedKeyNames } from "../constants/reservedKeyNames.js";
+import { parseDataBySchema } from "../utils/parseDataBySchema.js";
 
 export interface ModelOptions {
     host: string
@@ -21,6 +22,7 @@ class BaseModel<T extends { [ReservedKeyNames.ID]: string | null }> {
     collection: string
     modelData: T = {} as T
     schema?: typeof Schema
+    schemaDefinition: Record<string, any> | null
     apiClient: typeof FluidFetch
 
     id: string | null;
@@ -34,6 +36,7 @@ class BaseModel<T extends { [ReservedKeyNames.ID]: string | null }> {
 
         this.host = options.host
         this.collection = options.collection
+        this.schemaDefinition = options.schema || null
         this.schema = options.schema ? new Schema({...options.schema}) : null
         this.apiClient = apiClient
         this.id = null;
@@ -49,11 +52,24 @@ class BaseModel<T extends { [ReservedKeyNames.ID]: string | null }> {
 
     /**
      * Private
-     * Setter for this.modelData. Also sets this.id if it is present
+     * Parses fields in raw data using the schema type definitions.
+     * Converts Date-typed fields from strings to Date objects, and
+     * JsonField-typed fields from JSON strings to objects.
+     */
+    _parseBySchema = (data: T): T => {
+        if (!this.schemaDefinition) return data;
+        return parseDataBySchema(data as Record<string, any>, this.schemaDefinition) as T;
+    }
+
+    /**
+     * Private
+     * Setter for this.modelData. Also sets this.id if it is present.
+     * Applies schema-based field parsing before storing the data.
      */
     _setModelData = (data: T) => {
-        this.modelData = data;
-        this._setId(data && ReservedKeyNames.ID in data ? data[ReservedKeyNames.ID] : null);
+        const parsed = this._parseBySchema(data);
+        this.modelData = parsed;
+        this._setId(parsed && ReservedKeyNames.ID in parsed ? parsed[ReservedKeyNames.ID] : null);
     }
 
     /**
