@@ -30,21 +30,33 @@ interface AuthUser {
     [key: string]: any
 }
 
-type RegisterResponse = SuccessResponse<{
+type RegisterResult = {
     user: AuthUser
     tokens: Tokens
     session: number
-}>
+}
 
-type LoginResponse = SuccessResponse<{
+type RegisterResponse = SuccessResponse<RegisterResult>
+
+type LoginResult = {
     user: AuthUser
     tokens: Tokens
     session: number
-}>
+}
 
-type VerifyResponse = SuccessResponse<{}>
-type RefreshResponse = SuccessResponse<{tokens: Tokens}>
-type LogoutResponse = SuccessResponse<boolean>
+type LoginResponse = SuccessResponse<LoginResult>
+
+type VerifyResult = boolean
+type VerifyResponse = SuccessResponse<VerifyResult>
+
+type RefreshResult = {
+    tokens: Tokens
+}
+
+type RefreshResponse = SuccessResponse<RefreshResult>
+
+type LogoutResult = boolean
+type LogoutResponse = SuccessResponse<LogoutResult>
 
 class KodzeroAuthEmail extends KodzeroAuthBase {
     tokensManager: TokensManagerClass

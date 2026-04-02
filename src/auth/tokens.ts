@@ -15,14 +15,14 @@ class TokensManagerClass {
      * Checks if access token exists
      */
     hasAccess() {
-        return this.access && this.access !== ''
+        return this.access.length > 0
     }
 
     /**
      * Checks if refresh token exists
      */
     hasRefresh() {
-        return this.refresh && this.refresh !== ''
+        return this.refresh.length > 0
     }
 
     /**
