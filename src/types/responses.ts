@@ -12,3 +12,7 @@ export interface KzResponseFindMany<T = any> extends KzResponse<{
     left: number,
     found: T[],
 }> {}
+
+export type KzDistinctResult = Record<string, any[]>
+
+export interface KzResponseDistinct extends KzResponse<KzDistinctResult> {}

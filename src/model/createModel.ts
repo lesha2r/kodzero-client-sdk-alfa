@@ -1,6 +1,6 @@
 import FluidFetch from 'fluid-fetch'
 import BaseModel, { ModelOptions } from './BaseModel.js'
-import {KzResponseFindMany } from '../types/responses.js'
+import { KzResponseDistinct, KzResponseFindMany, KzDistinctResult } from '../types/responses.js'
 import validateApiResponse from '../utils/validateApiResponse.js'
 import buildURL from '../utils/buildURL.js'
 import constants from './constants.js'
@@ -37,7 +37,7 @@ export interface ModelClass<
     updateMany(updates: Partial<T>[]): Promise<T[]>
     delete(id: string): Promise<boolean>
     deleteMany(ids: string[]): Promise<Record<string, boolean>>
-    distinct(fields: string[], filter?: Record<string, any>): Promise<string[]>
+    distinct(fields: string[], filter?: Record<string, any>): Promise<KzDistinctResult>
     host: string
     collection: string
 }
@@ -248,22 +248,23 @@ const createModel = <
             return json.result;
         }
 
-        static async distinct(fields: string[], filter?: Record<string, any>): Promise<string[]> {
-            throw new Error('Distinct method is disabled in this SDK version'); // temporary disable
-
+        static async distinct(fields: string[], filter?: Record<string, any>): Promise<KzDistinctResult> {
             if (!fields || fields.length === 0) {
                 throw new Error(constants.DistinctRequiresFieldsArray);
             }
 
             const distinctUrl = buildURL(Model.host, Model.collection, 'distinct')
 
-            const response = await Model.apiClient.get(distinctUrl)
-                .params({ fields: fields.join(','), filter: filter ? JSON.stringify(filter) : undefined })
-                .headers({ 'Content-Type': 'application/json' });
+            const params: Record<string, any> = { fields: fields.join(',') }
+            if (filter && Object.keys(filter).length > 0) {
+                params.filter = JSON.stringify(filter)
+            }
+
+            const response = await Model.apiClient.get(distinctUrl).params(params)
 
             await Model._handleApiError(response);
 
-            const json = await response.json();
+            const json: KzResponseDistinct = await response.json();
             return json.result;
         }
 
