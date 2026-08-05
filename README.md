@@ -2,15 +2,16 @@
 
 Kodzero SDK — это официальный JavaScript/TypeScript-пакет для быстрой и безопасной работы с вашим проектом на Kodzero. Он упрощает интеграцию, избавляет от рутины ручных запросов и обеспечивает строгую типизацию, автокомплит и удобную работу с коллекциями и записями.
 
-> Kodzero — это платформа для создания backend с готовым API, базой данных и авторизацией. [Подробнее](https://kodzero.pro)
+> Kodzero — это платформа для создания backend с готовым API, базой данных и авторизацией. [Подробнее на сайте](https://kodzero.pro)
 
 Этот README описывает только npm-пакет `kodzero-sdk` (JavaScript/TypeScript клиент).
 
 ## Полезные ссылки
 
 - [Полная документация по SDK](https://kodzero.pro/docs/sdk)
+- ✨ [Инструкция для ИИ-агентов](https://kodzero.pro/docs/sdk/ai) 
 - [kodzero-sdk на GitHub](https://github.com/kodzeropro/kodzero-sdk)
-- [kodzero.pro](https://kodzero.pro)
+- [Подробнее о Kodzero](https://kodzero.pro)
 
 ## Установка
 
@@ -35,6 +36,12 @@ const kodzero = new Kodzero({
 - `authCollection` — ID коллекции пользователей для методов авторизации.
 
 Подробная инструкция: https://kodzero.pro/docs/sdk/start
+
+## ✨ Использование SDK с ИИ-агентом
+
+`kodzero-sdk` оптимизирован для работы с ИИ-агентами. Просто добавьте подготовленную нами инструкцию в контекст ChatGPT, Claude, Cursor, Windsurf или другого ИИ — и он сможет эффективно использовать SDK при разработке. 
+
+[Открыть инструкцию для ИИ-агентов →](https://kodzero.pro/docs/sdk/ai)
 
 ## Авторизация
 
