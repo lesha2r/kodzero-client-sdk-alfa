@@ -50,7 +50,7 @@ class KodzeroAuthEmail extends KodzeroAuthBase {
     tokensManager: TokensManagerClass
     collection: string
 
-    constructor(options: AuthOptions, api: typeof FluidFetch, tokensManager: TokensManagerClass) {
+    constructor(options: AuthOptions, api: FluidFetch, tokensManager: TokensManagerClass) {
         super(options, api, tokensManager)
 
         this.tokensManager = tokensManager

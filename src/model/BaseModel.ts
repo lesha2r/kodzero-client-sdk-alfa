@@ -23,15 +23,15 @@ class BaseModel<T extends { [ReservedKeyNames.ID]: string | null }> {
     modelData: T = {} as T
     schema?: typeof Schema
     schemaDefinition: Record<string, any> | null
-    apiClient: typeof FluidFetch
+    apiClient: FluidFetch
 
     id: string | null;
 
     static url: string
     static collection: string
-    static api: typeof FluidFetch
+    static api: FluidFetch
 
-    constructor(options: ModelOptions, apiClient: typeof FluidFetch) {
+    constructor(options: ModelOptions, apiClient: FluidFetch) {
         BaseModelSchema.validateOrThrow(options);
 
         this.host = options.host

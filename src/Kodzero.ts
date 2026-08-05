@@ -57,7 +57,8 @@ class Kodzero {
     authCollection: string | null
     auth: KodzeroAuth | null
     tokensManager: TokensManagerClass
-    api: typeof FluidFetch
+    api: InstanceType<typeof FluidFetch>
+
 
     /**
      * Tracks the in-flight refresh promise to deduplicate concurrent 401

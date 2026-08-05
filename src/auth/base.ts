@@ -6,10 +6,10 @@ import validateApiResponse from "../utils/validateApiResponse.js";
 
 class KodzeroAuthBase {
     host: string;
-    api: typeof FluidFetch
+    api: FluidFetch
     tokensManager: TokensManagerClass
 
-    constructor(options: AuthOptions, api: typeof FluidFetch, tokensManager: TokensManagerClass) {
+    constructor(options: AuthOptions, api: FluidFetch, tokensManager: TokensManagerClass) {
         BaseAuthSchema.validateOrThrow(options);
         
         this.host = options.host

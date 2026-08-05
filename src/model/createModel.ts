@@ -48,7 +48,7 @@ export interface ModelClass<
 const createModel = <
     T extends { [ReservedKeyNames.ID]: string | null},
     M = {}
->(options: ModelOptions, apiClient: typeof FluidFetch) => {
+>(options: ModelOptions, apiClient: FluidFetch) => {
     const schemaDef = options.schema || null;
 
     const _parseData = (data: T): T => {
@@ -258,6 +258,7 @@ const createModel = <
             const distinctUrl = buildURL(Model.host, Model.collection, 'distinct')
 
             const response = await Model.apiClient.get(distinctUrl)
+            // @ts-ignore
                 .params({ fields: fields.join(','), filter: filter ? JSON.stringify(filter) : undefined })
                 .headers({ 'Content-Type': 'application/json' });
 

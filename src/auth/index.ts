@@ -13,7 +13,7 @@ class KodzeroAuth extends KodzeroAuthBase {
     setTokens: (access: string, refresh?: string) => void
     clearTokens: () => void;
 
-    constructor(options: AuthOptions, api: typeof FluidFetch, tokensManager: TokensManagerClass) {
+    constructor(options: AuthOptions, api: FluidFetch, tokensManager: TokensManagerClass) {
         super(options, api, tokensManager)
 
         // Email Strategy
